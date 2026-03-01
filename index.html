@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResumeForge – Build Your Perfect Resume</title>
+  <meta name="description" content="Create a professional, elegant resume in minutes and download it as a PDF. Free, no sign-up required." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Header action group ── */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* ── Save indicator ── */
+    .save-indicator {
+      font-size: 12px;
+      font-weight: 500;
+      color: #22c55e;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .save-indicator.visible {
+      opacity: 1;
+    }
+
+    /* ── Clear Data button ── */
+    .btn-clear {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--danger, #ef4444);
+      padding: 4px 2px;
+      line-height: 1;
+      opacity: 0.75;
+      transition: opacity 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn-clear:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── Header ─────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="28" height="28" rx="8" fill="#007AFF"/>
+          <path d="M7 8h14M7 12h10M7 16h14M7 20h8" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>ResumeForge</span>
+      </div>
+      <div class="header-actions">
+        <span id="saveIndicator" class="save-indicator" aria-live="polite"></span>
+        <button id="clearBtn" class="btn-clear" onclick="clearData()" title="Clear all data and start over">Clear Data</button>
+        <button id="downloadBtn" class="btn-primary" onclick="downloadPDF()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── Main Layout ──────────────────────────────────── -->
+  <main class="app-layout">
+
+    <!-- LEFT: Builder Form -->
+    <section class="builder-panel" id="builderPanel">
+
+      <!-- Steps Navigation -->
+      <nav class="steps-nav" id="stepsNav">
+        <button class="step-btn active" data-step="0" onclick="goToStep(0)">
+          <span class="step-icon">👤</span><span>Personal</span>
+        </button>
+        <button class="step-btn" data-step="1" onclick="goToStep(1)">
+          <span class="step-icon">💼</span><span>Experience</span>
+        </button>
+        <button class="step-btn" data-step="2" onclick="goToStep(2)">
+          <span class="step-icon">🎓</span><span>Education</span>
+        </button>
+        <button class="step-btn" data-step="3" onclick="goToStep(3)">
+          <span class="step-icon">⚡</span><span>Skills</span>
+        </button>
+        <button class="step-btn" data-step="4" onclick="goToStep(4)">
+          <span class="step-icon">📝</span><span>Summary</span>
+        </button>
+      </nav>
+
+      <!-- Step Panels -->
+      <div class="steps-container">
+
+        <!-- STEP 0: Personal Info -->
+        <div class="step-panel active" id="step-0">
+          <div class="panel-header">
+            <h2>Personal Information</h2>
+            <p>Let's start with the basics about you</p>
+          </div>
+
+          <!-- Photo Upload -->
+          <div class="photo-upload-area">
+            <div class="photo-preview-circle" id="photoPreview" onclick="document.getElementById('photoInput').click()" title="Upload photo">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              <span class="photo-upload-hint">Add Photo</span>
+            </div>
+            <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)" />
+            <button class="photo-remove-btn" id="photoRemoveBtn" style="display:none" onclick="removePhoto()">Remove Photo</button>
+          </div>
+
+          <!-- Template Style -->
+          <div class="form-group full step0-picker">
+            <label>Template Style</label>
+            <div class="template-picker" id="templatePicker">
+              <button class="template-option active" data-template="classic" onclick="selectTemplate('classic')" title="Classic">
+                <div class="tmpl-preview classic-prev"></div>
+                <span>Classic</span>
+              </button>
+              <button class="template-option" data-template="modern" onclick="selectTemplate('modern')" title="Modern">
+                <div class="tmpl-preview modern-prev"></div>
+                <span>Modern</span>
+              </button>
+              <button class="template-option" data-template="minimal" onclick="selectTemplate('minimal')" title="Minimal">
+                <div class="tmpl-preview minimal-prev"></div>
+                <span>Minimal</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Color Theme -->
+          <div class="form-group full step0-picker">
+            <label>Color Theme</label>
+            <div class="color-swatches" id="colorSwatches">
+              <button class="color-swatch active" data-color="#1C1C1E" style="background:#1C1C1E" onclick="selectColor('#1C1C1E')" title="Charcoal"></button>
+              <button class="color-swatch" data-color="#1B3A6B" style="background:#1B3A6B" onclick="selectColor('#1B3A6B')" title="Navy"></button>
+              <button class="color-swatch" data-color="#1A3C2A" style="background:#1A3C2A" onclick="selectColor('#1A3C2A')" title="Forest"></button>
+              <button class="color-swatch" data-color="#3D1A4E" style="background:#3D1A4E" onclick="selectColor('#3D1A4E')" title="Plum"></button>
+              <button class="color-swatch" data-color="#7A1E2E" style="background:#7A1E2E" onclick="selectColor('#7A1E2E')" title="Crimson"></button>
+              <button class="color-swatch" data-color="#2C3E50" style="background:#2C3E50" onclick="selectColor('#2C3E50')" title="Slate"></button>
+              <button class="color-swatch" data-color="#0B4D48" style="background:#0B4D48" onclick="selectColor('#0B4D48')" title="Teal"></button>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="firstName">First Name</label>
+              <input type="text" id="firstName" placeholder="John" oninput="updatePreview()" />
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name</label>
+              <input type="text" id="lastName" placeholder="Doe" oninput="updatePreview()" />
+            </div>
+            <div class="form-group full">
+              <label for="jobTitle">Job Title / Role</label>
+              <input type="text" id="jobTitle" placeholder="Senior Software Engineer" oninput="updatePreview()" />
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" placeholder="john@example.com" oninput="updatePreview()" />
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" placeholder="+1 (555) 000-0000" oninput="updatePreview()" />
+            </div>
+            <div class="form-group">
+              <label for="location">Location</label>
+              <input type="text" id="location" placeholder="New York, NY" oninput="updatePreview()" />
+            </div>
+            <div class="form-group">
+              <label for="website">Website / Portfolio</label>
+              <input type="url" id="website" placeholder="https://johndoe.dev" oninput="updatePreview()" />
+            </div>
+            <div class="form-group">
+              <label for="linkedin">LinkedIn</label>
+              <input type="text" id="linkedin" placeholder="linkedin.com/in/johndoe" oninput="updatePreview()" />
+            </div>
+          </div>
+
+          <div class="step-footer">
+            <div></div>
+            <button class="btn-next" onclick="goToStep(1)">Next: Experience <span>→</span></button>
+          </div>
+        </div>
+
+        <!-- STEP 1: Experience -->
+        <div class="step-panel" id="step-1">
+          <div class="panel-header">
+            <h2>Work Experience</h2>
+            <p>Add your professional experience (most recent first)</p>
+          </div>
+
+          <div id="experienceList"></div>
+
+          <button class="btn-add" onclick="addExperience()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Experience
+          </button>
+
+          <div class="step-footer">
+            <button class="btn-back" onclick="goToStep(0)"><span>←</span> Back</button>
+            <button class="btn-next" onclick="goToStep(2)">Next: Education <span>→</span></button>
+          </div>
+        </div>
+
+        <!-- STEP 2: Education -->
+        <div class="step-panel" id="step-2">
+          <div class="panel-header">
+            <h2>Education</h2>
+            <p>Your academic background and certifications</p>
+          </div>
+
+          <div id="educationList"></div>
+
+          <button class="btn-add" onclick="addEducation()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Education
+          </button>
+
+          <div class="step-footer">
+            <button class="btn-back" onclick="goToStep(1)"><span>←</span> Back</button>
+            <button class="btn-next" onclick="goToStep(3)">Next: Skills <span>→</span></button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Skills -->
+        <div class="step-panel" id="step-3">
+          <div class="panel-header">
+            <h2>Skills</h2>
+            <p>Highlight your technical and soft skills</p>
+          </div>
+
+          <div class="skills-input-area">
+            <div class="form-group full">
+              <label>Add a skill and press Enter or comma</label>
+              <div class="skill-input-wrapper">
+                <div class="tags-container" id="tagsContainer"></div>
+                <input type="text" id="skillInput" placeholder="e.g. JavaScript, Project Management..." onkeydown="handleSkillInput(event)" />
+              </div>
+            </div>
+
+            <div class="skill-suggestions">
+              <div class="skill-category">
+                <p class="suggestions-label">Tech</p>
+                <div class="suggestions-list">
+                  <button onclick="addSkillTag('JavaScript')">JavaScript</button>
+                  <button onclick="addSkillTag('Python')">Python</button>
+                  <button onclick="addSkillTag('React')">React</button>
+                  <button onclick="addSkillTag('Node.js')">Node.js</button>
+                  <button onclick="addSkillTag('TypeScript')">TypeScript</button>
+                  <button onclick="addSkillTag('SQL')">SQL</button>
+                  <button onclick="addSkillTag('AWS')">AWS</button>
+                  <button onclick="addSkillTag('Docker')">Docker</button>
+                  <button onclick="addSkillTag('Git')">Git</button>
+                  <button onclick="addSkillTag('Figma')">Figma</button>
+                </div>
+              </div>
+              <div class="skill-category">
+                <p class="suggestions-label">Marketing &amp; SEO</p>
+                <div class="suggestions-list">
+                  <button onclick="addSkillTag('SEO')">SEO</button>
+                  <button onclick="addSkillTag('Google Analytics')">Google Analytics</button>
+                  <button onclick="addSkillTag('Content Marketing')">Content Marketing</button>
+                  <button onclick="addSkillTag('Email Marketing')">Email Marketing</button>
+                  <button onclick="addSkillTag('Social Media Marketing')">Social Media Marketing</button>
+                  <button onclick="addSkillTag('PPC Advertising')">PPC Advertising</button>
+                  <button onclick="addSkillTag('Brand Strategy')">Brand Strategy</button>
+                  <button onclick="addSkillTag('HubSpot')">HubSpot</button>
+                  <button onclick="addSkillTag('Copywriting')">Copywriting</button>
+                  <button onclick="addSkillTag('Market Research')">Market Research</button>
+                </div>
+              </div>
+              <div class="skill-category">
+                <p class="suggestions-label">Sales</p>
+                <div class="suggestions-list">
+                  <button onclick="addSkillTag('CRM')">CRM</button>
+                  <button onclick="addSkillTag('Salesforce')">Salesforce</button>
+                  <button onclick="addSkillTag('Lead Generation')">Lead Generation</button>
+                  <button onclick="addSkillTag('Account Management')">Account Management</button>
+                  <button onclick="addSkillTag('Negotiation')">Negotiation</button>
+                  <button onclick="addSkillTag('B2B Sales')">B2B Sales</button>
+                  <button onclick="addSkillTag('Pipeline Management')">Pipeline Management</button>
+                  <button onclick="addSkillTag('Cold Outreach')">Cold Outreach</button>
+                  <button onclick="addSkillTag('Sales Strategy')">Sales Strategy</button>
+                </div>
+              </div>
+              <div class="skill-category">
+                <p class="suggestions-label">Customer Experience</p>
+                <div class="suggestions-list">
+                  <button onclick="addSkillTag('Customer Support')">Customer Support</button>
+                  <button onclick="addSkillTag('Customer Success')">Customer Success</button>
+                  <button onclick="addSkillTag('Zendesk')">Zendesk</button>
+                  <button onclick="addSkillTag('Onboarding')">Onboarding</button>
+                  <button onclick="addSkillTag('Retention')">Retention</button>
+                  <button onclick="addSkillTag('NPS')">NPS</button>
+                  <button onclick="addSkillTag('Help Desk')">Help Desk</button>
+                  <button onclick="addSkillTag('Intercom')">Intercom</button>
+                  <button onclick="addSkillTag('Conflict Resolution')">Conflict Resolution</button>
+                </div>
+              </div>
+              <div class="skill-category">
+                <p class="suggestions-label">Content Creation</p>
+                <div class="suggestions-list">
+                  <button onclick="addSkillTag('Content Writing')">Content Writing</button>
+                  <button onclick="addSkillTag('Blogging')">Blogging</button>
+                  <button onclick="addSkillTag('Video Editing')">Video Editing</button>
+                  <button onclick="addSkillTag('Podcast Production')">Podcast Production</button>
+                  <button onclick="addSkillTag('Canva')">Canva</button>
+                  <button onclick="addSkillTag('Adobe Premiere')">Adobe Premiere</button>
+                  <button onclick="addSkillTag('Storyboarding')">Storyboarding</button>
+                  <button onclick="addSkillTag('Script Writing')">Script Writing</button>
+                  <button onclick="addSkillTag('Newsletters')">Newsletters</button>
+                </div>
+              </div>
+              <div class="skill-category">
+                <p class="suggestions-label">Soft Skills</p>
+                <div class="suggestions-list">
+                  <button onclick="addSkillTag('Leadership')">Leadership</button>
+                  <button onclick="addSkillTag('Communication')">Communication</button>
+                  <button onclick="addSkillTag('Agile')">Agile</button>
+                  <button onclick="addSkillTag('Problem Solving')">Problem Solving</button>
+                  <button onclick="addSkillTag('Project Management')">Project Management</button>
+                  <button onclick="addSkillTag('Teamwork')">Teamwork</button>
+                  <button onclick="addSkillTag('Time Management')">Time Management</button>
+                  <button onclick="addSkillTag('Critical Thinking')">Critical Thinking</button>
+                  <button onclick="addSkillTag('Adaptability')">Adaptability</button>
+                  <button onclick="addSkillTag('Mentoring')">Mentoring</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-footer">
+            <button class="btn-back" onclick="goToStep(2)"><span>←</span> Back</button>
+            <button class="btn-next" onclick="goToStep(4)">Next: Summary <span>→</span></button>
+          </div>
+        </div>
+
+        <!-- STEP 4: Summary -->
+        <div class="step-panel" id="step-4">
+          <div class="panel-header">
+            <h2>Professional Summary</h2>
+            <p>A compelling snapshot of your professional identity</p>
+          </div>
+
+          <div class="form-group full">
+            <label for="summary">Summary</label>
+            <textarea id="summary" rows="6" placeholder="Passionate software engineer with 5+ years of experience building scalable web applications. Proven track record of delivering high-impact solutions that drive business growth..." oninput="updatePreview(); autoResize(this)"></textarea>
+            <div class="char-count"><span id="summaryCount">0</span> / 400 characters recommended</div>
+          </div>
+
+          <div class="step-footer">
+            <button class="btn-back" onclick="goToStep(3)"><span>←</span> Back</button>
+            <button class="btn-primary large" onclick="downloadPDF()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download PDF
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /steps-container -->
+    </section>
+
+    <!-- RIGHT: Live Preview -->
+    <section class="preview-panel" id="previewPanel">
+      <div class="preview-header">
+        <span class="preview-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Live Preview
+        </span>
+        <div class="zoom-controls">
+          <button onclick="adjustZoom(-0.1)" title="Zoom out">−</button>
+          <span id="zoomLabel">80%</span>
+          <button onclick="adjustZoom(0.1)" title="Zoom in">+</button>
+        </div>
+      </div>
+      <div class="preview-scroll">
+        <div class="preview-zoom-wrapper" id="previewZoomWrapper">
+          <div class="resume-page" id="resumeOutput">
+            <!-- Dynamically rendered resume -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
