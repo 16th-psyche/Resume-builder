@@ -59,6 +59,17 @@
      letter-spacing: -0.3px;
    }
 
+   /* ─── Header action group ── */
+   .header-actions { display: flex; align-items: center; gap: 12px; }
+
+   /* ─── Save indicator ── */
+   .save-indicator {
+     font-size: 12px; font-weight: 500; color: #22c55e;
+     opacity: 0; transition: opacity 0.25s ease;
+     pointer-events: none; white-space: nowrap;
+   }
+   .save-indicator.visible { opacity: 1; }
+
    /* ─── Buttons ─────────────────────────────────────────── */
    .btn-primary {
      display: inline-flex; align-items: center; gap: 7px;
@@ -66,8 +77,7 @@
      color: #fff; border: none; border-radius: 980px;
      padding: 9px 20px; font-size: .88rem; font-weight: 600;
      cursor: pointer; transition: opacity var(--transition);
-     letter-spacing: -0.01em;
-     font-family: inherit;
+     letter-spacing: -0.01em; font-family: inherit;
    }
    .btn-primary:hover { opacity: .88; }
    .btn-primary:active { opacity: .75; }
@@ -78,9 +88,7 @@
      background: var(--accent); color: #fff; border: none;
      border-radius: 980px; padding: 10px 22px;
      font-size: .88rem; font-weight: 600; cursor: pointer;
-     transition: opacity var(--transition);
-     letter-spacing: -0.01em;
-     font-family: inherit;
+     transition: opacity var(--transition); letter-spacing: -0.01em; font-family: inherit;
    }
    .btn-next:hover { opacity: .88; }
    .btn-next:active { opacity: .75; }
@@ -90,8 +98,7 @@
      background: rgba(60,60,67,.08); color: var(--accent); border: none;
      border-radius: 980px; padding: 10px 22px;
      font-size: .88rem; font-weight: 600; cursor: pointer;
-     transition: background var(--transition);
-     font-family: inherit;
+     transition: background var(--transition); font-family: inherit;
    }
    .btn-back:hover { background: rgba(60,60,67,.13); }
    .btn-back:active { background: rgba(60,60,67,.18); }
@@ -113,6 +120,44 @@
    }
    .btn-remove:hover { color: var(--danger); }
 
+   /* ─── Clear button ────────────────────────────────────── */
+   .btn-clear {
+     background: none; border: none; cursor: pointer;
+     font-size: 13px; font-weight: 500; color: var(--danger);
+     padding: 4px 2px; line-height: 1; opacity: 0.75;
+     transition: opacity 0.15s ease; white-space: nowrap; font-family: inherit;
+   }
+   .btn-clear:hover { opacity: 1; text-decoration: underline; }
+
+   /* ─── Sample / Preview toggle buttons ────────────────── */
+   .btn-sample {
+     display: inline-flex; align-items: center; gap: 6px;
+     background: var(--accent-light); color: var(--accent);
+     border: 1px solid rgba(0,122,255,.25); border-radius: 980px;
+     padding: 8px 18px; font-size: .82rem; font-weight: 600;
+     cursor: pointer; transition: background var(--transition); font-family: inherit;
+     margin-top: 8px;
+   }
+   .btn-sample:hover { background: rgba(0,122,255,.15); }
+
+   .btn-preview-toggle {
+     display: none; /* shown only on mobile */
+     align-items: center; gap: 6px;
+     background: var(--accent); color: #fff; border: none;
+     border-radius: 980px; padding: 8px 16px;
+     font-size: .82rem; font-weight: 600; cursor: pointer; font-family: inherit;
+   }
+
+   /* ─── Danger confirm button (modal) ──────────────────── */
+   .btn-danger-confirm {
+     display: inline-flex; align-items: center; gap: 7px;
+     background: var(--danger); color: #fff; border: none;
+     border-radius: 980px; padding: 10px 22px;
+     font-size: .88rem; font-weight: 600; cursor: pointer;
+     transition: opacity var(--transition); font-family: inherit;
+   }
+   .btn-danger-confirm:hover { opacity: .88; }
+
    /* ─── App Layout ──────────────────────────────────────── */
    .app-layout {
      flex: 1; display: grid;
@@ -132,35 +177,38 @@
    /* ─── Steps Nav (iOS Segmented Control style) ─────────── */
    .steps-nav {
      display: flex; gap: 0;
-     padding: 10px 16px;
-     background: var(--surface);
-     border-bottom: 1px solid var(--border);
+     background: rgba(118,118,128,.12);
+     border-radius: 10px;
+     padding: 3px;
+     margin: 10px 16px 0;
      overflow-x: auto;
    }
    .steps-nav::-webkit-scrollbar { height: 0; }
 
-   /* Wrap steps in a pill container */
-   .steps-nav {
-     background: rgba(118,118,128,.12);
-     border-radius: 10px;
-     padding: 3px;
-     margin: 10px 16px;
-     border-bottom: none;
+   /* ─── Progress bar (#2) ───────────────────────────────── */
+   .step-progress-row {
+     display: flex; align-items: center; gap: 10px;
+     padding: 8px 16px 0;
    }
-
-   /* Re-attach the border under the nav area */
-   .builder-panel > .steps-nav {
-     border-radius: 10px;
-     margin: 10px 16px 0;
+   .step-progress-bar {
+     flex: 1; height: 4px; background: rgba(118,118,128,.15);
+     border-radius: 99px; overflow: hidden;
+   }
+   .step-progress-fill {
+     height: 100%; background: var(--accent);
+     border-radius: 99px;
+     transition: width .35s ease;
+     width: 20%;
+   }
+   .step-progress-label {
+     font-size: .72rem; font-weight: 600; color: var(--text-3);
+     white-space: nowrap;
    }
 
    /* thin separator line below nav row */
    .builder-panel::after {
-     content: '';
-     display: block;
-     height: 1px;
-     background: var(--border);
-     margin: 0 0;
+     content: ''; display: block;
+     height: 1px; background: var(--border);
    }
 
    .step-btn {
@@ -169,14 +217,12 @@
      background: transparent; border-radius: 8px;
      cursor: pointer; font-size: .72rem; font-weight: 600;
      color: var(--text-2); white-space: nowrap;
-     transition: all var(--transition); min-width: 0;
-     font-family: inherit;
+     transition: all var(--transition); min-width: 0; font-family: inherit;
    }
    .step-btn .step-icon { display: none; }
    .step-btn:hover { color: var(--text-1); }
    .step-btn.active {
-     background: var(--surface);
-     color: var(--text-1);
+     background: var(--surface); color: var(--text-1);
      box-shadow: 0 1px 4px rgba(0,0,0,.14), 0 0 0 0.5px rgba(0,0,0,.06);
    }
    .step-btn.done { color: var(--success); }
@@ -193,9 +239,7 @@
      transition: all .28s ease;
    }
    .step-panel::-webkit-scrollbar { width: 0; }
-   .step-panel.active {
-     opacity: 1; pointer-events: all; transform: translateX(0);
-   }
+   .step-panel.active { opacity: 1; pointer-events: all; transform: translateX(0); }
 
    .panel-header { margin-bottom: 20px; }
    .panel-header h2 {
@@ -206,24 +250,18 @@
 
    .step-footer {
      display: flex; align-items: center; justify-content: space-between;
-     padding: 16px 0 24px;
-     border-top: 1px solid var(--border); margin-top: 20px;
+     padding: 16px 0 24px; border-top: 1px solid var(--border); margin-top: 20px;
    }
 
    /* ─── Form Elements ───────────────────────────────────── */
-   .form-grid {
-     display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
-   }
+   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
    .form-group { display: flex; flex-direction: column; gap: 5px; }
    .form-group.full { grid-column: 1 / -1; }
 
-   label {
-     font-size: .8rem; font-weight: 500; color: var(--text-2);
-     letter-spacing: 0;
-   }
+   label { font-size: .8rem; font-weight: 500; color: var(--text-2); }
 
    input[type="text"], input[type="email"], input[type="tel"],
-   input[type="url"], input[type="date"], textarea {
+   input[type="url"], input[type="date"], input[type="month"], textarea {
      width: 100%; padding: 11px 14px;
      border: none; border-radius: var(--radius-sm);
      font-family: inherit; font-size: .9rem; color: var(--text-1);
@@ -233,17 +271,22 @@
    }
    input:focus, textarea:focus {
      background: rgba(118,118,128,.14);
-     outline: 2px solid var(--accent);
-     outline-offset: 0;
+     outline: 2px solid var(--accent); outline-offset: 0;
    }
    input::placeholder, textarea::placeholder { color: var(--text-3); }
    textarea { resize: none; min-height: 110px; line-height: 1.6; }
 
-   .char-count {
-     font-size: .75rem; color: var(--text-3); text-align: right; margin-top: 4px;
+   /* ─── Field validation (#3) ──────────────────────────── */
+   input.invalid { outline: 2px solid var(--danger) !important; background: rgba(255,59,48,.06) !important; }
+   .field-error {
+     font-size: .73rem; color: var(--danger); font-weight: 500; margin-top: 2px;
+     display: block; animation: fadeIn .15s ease;
    }
+   @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 
+   .char-count { font-size: .75rem; color: var(--text-3); text-align: right; margin-top: 4px; }
    .char-count.over-limit { color: var(--danger); font-weight: 600; }
+
    /* ─── Photo Upload ─────────────────────────────────────── */
    .photo-upload-area {
      display: flex; flex-direction: column; align-items: center;
@@ -261,10 +304,7 @@
    }
    .photo-preview-circle:hover { background-color: rgba(118,118,128,.18); }
    .photo-preview-circle svg { color: var(--text-3); opacity: .8; }
-   .photo-upload-hint {
-     font-size: .65rem; font-weight: 600; color: var(--accent);
-     letter-spacing: .01em;
-   }
+   .photo-upload-hint { font-size: .65rem; font-weight: 600; color: var(--accent); }
    .photo-remove-btn {
      background: none; border: none; cursor: pointer;
      color: var(--danger); font-size: .78rem; font-weight: 600;
@@ -283,14 +323,22 @@
    .entry-card:focus-within {
      box-shadow: 0 2px 8px rgba(0,0,0,.08), 0 8px 24px rgba(0,0,0,.06);
    }
-
    .entry-card-header {
      display: flex; justify-content: space-between; align-items: center;
      margin-bottom: 14px;
    }
    .entry-card-title { font-size: .85rem; font-weight: 600; color: var(--text-2); }
-
    .entry-card .form-grid { gap: 10px; }
+
+   /* ─── Drag handle (#5) ────────────────────────────────── */
+   .drag-handle {
+     cursor: grab; color: var(--text-3); font-size: 1rem;
+     padding: 2px 4px; border-radius: 4px;
+     transition: color var(--transition);
+     user-select: none;
+   }
+   .drag-handle:hover { color: var(--text-2); }
+   .drag-handle:active { cursor: grabbing; }
 
    .date-range {
      grid-column: 1 / -1; display: grid;
@@ -301,9 +349,7 @@
      align-items: center; padding-bottom: 2px;
    }
    .present-toggle label { font-size: .7rem; color: var(--text-3); }
-   .toggle-switch {
-     position: relative; width: 36px; height: 20px;
-   }
+   .toggle-switch { position: relative; width: 36px; height: 20px; }
    .toggle-switch input { opacity: 0; width: 0; height: 0; }
    .toggle-slider {
      position: absolute; cursor: pointer; inset: 0;
@@ -327,14 +373,12 @@
      outline: 2px solid transparent;
    }
    .skill-input-wrapper:focus-within {
-     background: rgba(118,118,128,.14);
-     outline: 2px solid var(--accent);
+     background: rgba(118,118,128,.14); outline: 2px solid var(--accent);
    }
    .skill-input-wrapper input {
      border: none; padding: 0; background: transparent;
      min-width: 160px; flex: 1; outline: none;
-     font-size: .9rem; box-shadow: none;
-     font-family: inherit;
+     font-size: .9rem; box-shadow: none; font-family: inherit;
    }
    .skill-tag {
      display: inline-flex; align-items: center; gap: 5px;
@@ -351,7 +395,10 @@
 
    .skill-suggestions { margin-top: 14px; }
    .skill-category { margin-bottom: 14px; }
-   .suggestions-label { font-size: .72rem; font-weight: 600; color: var(--text-3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .04em; }
+   .suggestions-label {
+     font-size: .72rem; font-weight: 600; color: var(--text-3);
+     margin-bottom: 6px; text-transform: uppercase; letter-spacing: .04em;
+   }
    .suggestions-list { display: flex; flex-wrap: wrap; gap: 7px; }
    .suggestions-list button {
      background: var(--surface); border: 1px solid var(--border);
@@ -361,6 +408,15 @@
    }
    .suggestions-list button:hover {
      border-color: var(--accent); color: var(--accent); background: var(--accent-light);
+   }
+   /* Skill suggestion already-used state (#6) */
+   .suggestions-list button.skill-used,
+   .suggestions-list button:disabled {
+     opacity: .35; cursor: default;
+     border-color: var(--border); color: var(--text-3); background: var(--surface);
+   }
+   .suggestions-list button:disabled:hover {
+     border-color: var(--border); color: var(--text-3); background: var(--surface);
    }
 
    /* ─── Step 0 pickers spacing ─────────────────────────── */
@@ -385,8 +441,7 @@
    .template-option {
      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px;
      padding: 12px; border: 1.5px solid var(--border); border-radius: var(--radius);
-     background: var(--surface); cursor: pointer; transition: all var(--transition);
-     font-family: inherit;
+     background: var(--surface); cursor: pointer; transition: all var(--transition); font-family: inherit;
    }
    .template-option:hover { border-color: var(--accent); }
    .template-option.active { border-color: var(--accent); background: var(--accent-light); }
@@ -442,19 +497,20 @@
    }
    .preview-label {
      display: flex; align-items: center; gap: 6px;
-     font-size: .76rem; font-weight: 600; color: var(--text-3);
-     letter-spacing: .02em;
+     font-size: .76rem; font-weight: 600; color: var(--text-3); letter-spacing: .02em;
    }
-   .zoom-controls {
-     display: flex; align-items: center; gap: 6px;
-   }
+   .zoom-controls { display: flex; align-items: center; gap: 6px; }
    .zoom-controls button {
      width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
      background: rgba(118,118,128,.12); border: none; border-radius: 7px;
      font-size: 1rem; cursor: pointer; color: var(--text-2);
      transition: background var(--transition); font-family: inherit;
    }
-   .zoom-controls button:hover { background: rgba(118,118,128,.2); }
+   .zoom-controls button:hover:not(:disabled) { background: rgba(118,118,128,.2); }
+   /* Zoom button disabled state (#8) */
+   .zoom-controls button:disabled {
+     opacity: .3; cursor: not-allowed;
+   }
    .zoom-controls span { font-size: .78rem; font-weight: 600; color: var(--text-2); width: 36px; text-align: center; }
 
    .preview-scroll {
@@ -463,15 +519,11 @@
    }
    .preview-scroll::-webkit-scrollbar { width: 5px; }
    .preview-scroll::-webkit-scrollbar-thumb { background: rgba(60,60,67,.2); border-radius: 3px; }
-
-   .preview-zoom-wrapper {
-     transform-origin: top center;
-     transition: transform .2s ease;
-   }
+   .preview-zoom-wrapper { transform-origin: top center; transition: transform .2s ease; }
 
    /* ─── Resume Page ─────────────────────────────────────── */
    .resume-page {
-     width: 794px; /* A4 at 96dpi */
+     width: 794px;
      min-height: 1122px;
      background: #fff;
      box-shadow: var(--shadow-lg);
@@ -481,21 +533,21 @@
      transition: all .3s ease;
    }
 
+   /* ─── PDF page-break rules (#11) ─────────────────────── */
+   .resume-section        { page-break-inside: avoid; }
+   .experience-entry      { page-break-inside: avoid; }
+   .education-entry       { page-break-inside: avoid; }
+   .section-heading       { page-break-after: avoid; }
+
    /* ── Resume Photo ── */
    .resume-photo {
      width: 80px; height: 80px; border-radius: 50%;
      object-fit: cover; flex-shrink: 0;
      border: 2.5px solid rgba(255,255,255,.35);
    }
-   .resume-photo.sidebar-photo {
-     width: 72px; height: 72px; margin-bottom: 16px;
-     display: block;
-   }
-   .tmpl-minimal .resume-photo {
-     border-color: #d1d5db;
-   }
+   .resume-photo.sidebar-photo { width: 72px; height: 72px; margin-bottom: 16px; display: block; }
+   .tmpl-minimal .resume-photo { border-color: #d1d5db; }
 
-   /* ── Global resume text wrapping ── */
    .resume-page * { word-break: break-word; overflow-wrap: anywhere; }
 
    /* ── Template: Classic ── */
@@ -505,40 +557,21 @@
      display: flex; align-items: center; gap: 24px;
    }
    .resume-page.tmpl-classic .resume-header-text { flex: 1; }
-   .resume-page.tmpl-classic .resume-name {
-     font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px;
-   }
-   .resume-page.tmpl-classic .resume-title {
-     font-size: 1rem; opacity: .75; font-weight: 400; margin-bottom: 18px;
-   }
-   .resume-page.tmpl-classic .resume-contact {
-     display: flex; flex-wrap: wrap; gap: 14px;
-   }
-   .resume-page.tmpl-classic .contact-item {
-     display: flex; align-items: center; gap: 6px;
-     font-size: .78rem; opacity: .85;
-   }
-   .resume-page.tmpl-classic .resume-body {
-     padding: 36px 48px;
-     display: grid; grid-template-columns: 1fr; gap: 28px;
-   }
+   .resume-page.tmpl-classic .resume-name { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+   .resume-page.tmpl-classic .resume-title { font-size: 1rem; opacity: .75; font-weight: 400; margin-bottom: 18px; }
+   .resume-page.tmpl-classic .resume-contact { display: flex; flex-wrap: wrap; gap: 14px; }
+   .resume-page.tmpl-classic .contact-item { display: flex; align-items: center; gap: 6px; font-size: .78rem; opacity: .85; }
+   .resume-page.tmpl-classic .resume-body { padding: 36px 48px; display: grid; grid-template-columns: 1fr; gap: 28px; }
 
    /* ── Template: Modern ── */
-   .resume-page.tmpl-modern {
-     display: grid; grid-template-columns: 220px minmax(0, 1fr);
-   }
+   .resume-page.tmpl-modern { display: grid; grid-template-columns: 220px minmax(0, 1fr); }
    .resume-page.tmpl-modern .resume-sidebar {
      background: var(--resume-header-color, #1C1C1E);
      color: #fff; padding: 40px 24px; min-height: 100%;
-     min-width: 0; overflow: hidden;
-     word-break: break-word; overflow-wrap: anywhere;
+     min-width: 0; overflow: hidden; word-break: break-word; overflow-wrap: anywhere;
    }
-   .resume-page.tmpl-modern .sidebar-name {
-     font-size: 1.25rem; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.3px;
-   }
-   .resume-page.tmpl-modern .sidebar-title {
-     font-size: .78rem; opacity: .7; margin-bottom: 24px; line-height: 1.4;
-   }
+   .resume-page.tmpl-modern .sidebar-name { font-size: 1.25rem; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.3px; }
+   .resume-page.tmpl-modern .sidebar-title { font-size: .78rem; opacity: .7; margin-bottom: 24px; line-height: 1.4; }
    .resume-page.tmpl-modern .sidebar-section { margin-bottom: 24px; }
    .resume-page.tmpl-modern .sidebar-section-label {
      font-size: .65rem; font-weight: 700; text-transform: uppercase;
@@ -550,92 +583,49 @@
      display: flex; align-items: flex-start; gap: 6px; line-height: 1.4;
      min-width: 0; word-break: break-word; overflow-wrap: anywhere;
    }
-   .resume-page.tmpl-modern .contact-item span {
-     min-width: 0; flex: 1; word-break: break-word; overflow-wrap: anywhere;
-   }
+   .resume-page.tmpl-modern .contact-item span { min-width: 0; flex: 1; word-break: break-word; overflow-wrap: anywhere; }
    .resume-page.tmpl-modern .sidebar-skill-tag {
      display: inline-block; background: rgba(255,255,255,.15);
-     border-radius: 999px; padding: 3px 10px; font-size: .7rem;
-     margin: 3px 3px 0 0;
+     border-radius: 999px; padding: 3px 10px; font-size: .7rem; margin: 3px 3px 0 0;
    }
-   .resume-page.tmpl-modern .resume-main {
-     padding: 40px 36px;
-   }
-   .resume-page.tmpl-modern .modern-name-header {
-     display: none; /* name shown in sidebar */
-   }
+   .resume-page.tmpl-modern .resume-main { padding: 40px 36px; }
+   .resume-page.tmpl-modern .modern-name-header { display: none; }
 
    /* ── Template: Minimal ── */
-   .resume-page.tmpl-minimal .resume-header {
-     padding: 40px 48px 24px; border-bottom: 2px solid #1C1C1E;
-     display: flex; align-items: center; gap: 24px;
-   }
+   .resume-page.tmpl-minimal .resume-header { padding: 40px 48px 24px; border-bottom: 2px solid #1C1C1E; display: flex; align-items: center; gap: 24px; }
    .resume-page.tmpl-minimal .resume-header-text { flex: 1; }
-   .resume-page.tmpl-minimal .resume-name {
-     font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; color: #1a202c;
-   }
-   .resume-page.tmpl-minimal .resume-title {
-     font-size: 1rem; color: #4b5563; margin: 4px 0 16px;
-   }
-   .resume-page.tmpl-minimal .resume-contact {
-     display: flex; flex-wrap: wrap; gap: 16px;
-   }
-   .resume-page.tmpl-minimal .contact-item {
-     font-size: .78rem; color: #4b5563;
-     display: flex; align-items: center; gap: 5px;
-   }
-   .resume-page.tmpl-minimal .resume-body {
-     padding: 28px 48px;
-     display: grid; grid-template-columns: 1fr; gap: 24px;
-   }
+   .resume-page.tmpl-minimal .resume-name { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; color: #1a202c; }
+   .resume-page.tmpl-minimal .resume-title { font-size: 1rem; color: #4b5563; margin: 4px 0 16px; }
+   .resume-page.tmpl-minimal .resume-contact { display: flex; flex-wrap: wrap; gap: 16px; }
+   .resume-page.tmpl-minimal .contact-item { font-size: .78rem; color: #4b5563; display: flex; align-items: center; gap: 5px; }
+   .resume-page.tmpl-minimal .resume-body { padding: 28px 48px; display: grid; grid-template-columns: 1fr; gap: 24px; }
 
    /* ── Shared Resume Sections ── */
-   .resume-section { }
-
    .section-heading {
      font-size: .68rem; font-weight: 700; text-transform: uppercase;
      letter-spacing: 1.5px; color: #007AFF; margin-bottom: 16px;
      display: flex; align-items: center; gap: 10px;
    }
-   .section-heading::after {
-     content: ''; flex: 1; height: 1px; background: #e5e7eb;
-   }
+   .section-heading::after { content: ''; flex: 1; height: 1px; background: #e5e7eb; }
    .tmpl-minimal .section-heading { color: #1a202c; }
    .tmpl-minimal .section-heading::after { background: #d1d5db; }
-
-   .resume-summary-text {
-     font-size: .82rem; line-height: 1.7; color: #374151;
-   }
-
+   .resume-summary-text { font-size: .82rem; line-height: 1.7; color: #374151; }
    .experience-entry, .education-entry { margin-bottom: 20px; }
    .experience-entry:last-child, .education-entry:last-child { margin-bottom: 0; }
-
-   .entry-header {
-     display: flex; justify-content: space-between; align-items: flex-start;
-     margin-bottom: 4px;
-   }
+   .entry-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
    .entry-title { font-size: .9rem; font-weight: 700; color: #111827; }
    .entry-subtitle { font-size: .82rem; color: #007AFF; font-weight: 500; margin-bottom: 4px; }
    .tmpl-minimal .entry-subtitle { color: #4b5563; }
    .entry-dates { font-size: .75rem; color: #9ca3af; white-space: nowrap; margin-left: 12px; }
-   .entry-description {
-     font-size: .8rem; line-height: 1.65; color: #4b5563; margin-top: 6px;
-   }
+   .entry-description { font-size: .8rem; line-height: 1.65; color: #4b5563; margin-top: 6px; }
    .entry-description ul { padding-left: 14px; }
    .entry-description li { margin-bottom: 3px; }
-
-   .skills-grid {
-     display: flex; flex-wrap: wrap; gap: 8px;
-   }
+   .skills-grid { display: flex; flex-wrap: wrap; gap: 8px; }
    .resume-skill-badge {
      background: rgba(0,122,255,.08); color: #0066CC;
-     border-radius: 999px; padding: 4px 14px;
-     font-size: .75rem; font-weight: 600;
+     border-radius: 999px; padding: 4px 14px; font-size: .75rem; font-weight: 600;
    }
-   .tmpl-minimal .resume-skill-badge {
-     background: #f3f4f6; color: #374151;
-     border: 1px solid #e5e7eb;
-   }
+   .tmpl-minimal .resume-skill-badge { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
 
    .empty-placeholder {
      display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -652,8 +642,70 @@
      padding: 12px 22px; font-size: .87rem; font-weight: 500;
      box-shadow: 0 4px 24px rgba(0,0,0,.2); transition: transform .3s ease, opacity .3s ease;
      opacity: 0; pointer-events: none; z-index: 999;
-     display: flex; align-items: center; gap: 8px;
+     display: flex; align-items: center; gap: 10px;
    }
-   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
    .toast.success::before { content: '✓'; color: #34C759; }
-   .toast.error::before { content: '✕'; color: #FF3B30; }
+   .toast.error::before   { content: '✕'; color: #FF3B30; }
+   .toast-undo-btn {
+     background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.35);
+     color: #fff; border-radius: 6px; padding: 3px 10px;
+     font-size: .78rem; font-weight: 600; cursor: pointer; font-family: inherit;
+   }
+   .toast-undo-btn:hover { background: rgba(255,255,255,.3); }
+
+   /* ─── Modal (#4) ──────────────────────────────────────── */
+   .modal-overlay {
+     position: fixed; inset: 0; background: rgba(0,0,0,.45);
+     backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+     z-index: 500; display: flex; align-items: center; justify-content: center;
+     opacity: 0; pointer-events: none; transition: opacity .2s ease;
+   }
+   .modal-overlay.open { opacity: 1; pointer-events: auto; }
+   .modal-box {
+     background: var(--surface); border-radius: 20px;
+     padding: 28px 28px 24px; width: 340px; max-width: 92vw;
+     box-shadow: 0 20px 60px rgba(0,0,0,.18);
+     transform: scale(.94); transition: transform .2s ease;
+   }
+   .modal-overlay.open .modal-box { transform: scale(1); }
+   .modal-box h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+   .modal-box p  { font-size: .85rem; color: var(--text-2); line-height: 1.55; margin-bottom: 20px; }
+   .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+   /* ─── Spin animation (#17) ────────────────────────────── */
+   @keyframes spin { to { transform: rotate(360deg); } }
+   .spin { animation: spin 1s linear infinite; display: inline-block; }
+
+   /* ─── Responsive layout (#1) ─────────────────────────── */
+   @media (max-width: 900px) {
+     .app-layout {
+       grid-template-columns: 1fr;
+       height: auto;
+       min-height: calc(100vh - 56px);
+     }
+     .builder-panel {
+       border-right: none;
+       border-bottom: 1px solid var(--border);
+       height: calc(100vh - 56px);
+     }
+     .preview-panel {
+       display: none;
+       position: fixed; inset: 56px 0 0 0;
+       z-index: 200;
+       background: var(--surface-2);
+     }
+     .preview-panel.mobile-visible { display: flex; }
+     .builder-panel.mobile-hidden  { display: none; }
+     .btn-preview-toggle { display: inline-flex; }
+     .header-actions .save-indicator { display: none; }
+   }
+
+   @media (max-width: 480px) {
+     .site-header { padding: 0 16px; }
+     .step-panel  { padding: 16px 16px 0; }
+     .form-grid   { grid-template-columns: 1fr; }
+     .form-group.full { grid-column: 1; }
+     .date-range  { grid-template-columns: 1fr 1fr; }
+     .date-range .present-toggle { grid-column: 1 / -1; flex-direction: row; justify-content: flex-start; }
+   }

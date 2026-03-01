@@ -6,51 +6,10 @@
   <title>ResumeForge – Build Your Perfect Resume</title>
   <meta name="description" content="Create a professional, elegant resume in minutes and download it as a PDF. Free, no sign-up required." />
   <link rel="stylesheet" href="style.css" />
-  <style>
-    /* ── Header action group ── */
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    /* ── Save indicator ── */
-    .save-indicator {
-      font-size: 12px;
-      font-weight: 500;
-      color: #22c55e;
-      opacity: 0;
-      transition: opacity 0.25s ease;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-    .save-indicator.visible {
-      opacity: 1;
-    }
-
-    /* ── Clear Data button ── */
-    .btn-clear {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--danger, #ef4444);
-      padding: 4px 2px;
-      line-height: 1;
-      opacity: 0.75;
-      transition: opacity 0.15s ease;
-      white-space: nowrap;
-    }
-    .btn-clear:hover {
-      opacity: 1;
-      text-decoration: underline;
-    }
-  </style>
 </head>
 <body>
 
-  <!-- ─── Header ─────────────────────────────────────── -->
+  <!-- ─── Header ──────────────────────────────────────────── -->
   <header class="site-header">
     <div class="header-inner">
       <div class="logo">
@@ -62,7 +21,8 @@
       </div>
       <div class="header-actions">
         <span id="saveIndicator" class="save-indicator" aria-live="polite"></span>
-        <button id="clearBtn" class="btn-clear" onclick="clearData()" title="Clear all data and start over">Clear Data</button>
+        <button id="previewToggle" class="btn-preview-toggle" onclick="togglePreview()">👁 Preview</button>
+        <button id="clearBtn" class="btn-clear" onclick="openClearModal()" title="Clear all data and start over">Clear Data</button>
         <button id="downloadBtn" class="btn-primary" onclick="downloadPDF()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download PDF
@@ -71,36 +31,44 @@
     </div>
   </header>
 
-  <!-- ─── Main Layout ──────────────────────────────────── -->
+  <!-- ─── Main Layout ─────────────────────────────────────── -->
   <main class="app-layout">
 
     <!-- LEFT: Builder Form -->
     <section class="builder-panel" id="builderPanel">
 
       <!-- Steps Navigation -->
-      <nav class="steps-nav" id="stepsNav">
-        <button class="step-btn active" data-step="0" onclick="goToStep(0)">
+      <nav class="steps-nav" id="stepsNav" role="tablist" aria-label="Resume sections">
+        <button class="step-btn active" data-step="0" onclick="goToStep(0)" role="tab" aria-selected="true" tabindex="0">
           <span class="step-icon">👤</span><span>Personal</span>
         </button>
-        <button class="step-btn" data-step="1" onclick="goToStep(1)">
+        <button class="step-btn" data-step="1" onclick="goToStep(1)" role="tab" aria-selected="false" tabindex="-1">
           <span class="step-icon">💼</span><span>Experience</span>
         </button>
-        <button class="step-btn" data-step="2" onclick="goToStep(2)">
+        <button class="step-btn" data-step="2" onclick="goToStep(2)" role="tab" aria-selected="false" tabindex="-1">
           <span class="step-icon">🎓</span><span>Education</span>
         </button>
-        <button class="step-btn" data-step="3" onclick="goToStep(3)">
+        <button class="step-btn" data-step="3" onclick="goToStep(3)" role="tab" aria-selected="false" tabindex="-1">
           <span class="step-icon">⚡</span><span>Skills</span>
         </button>
-        <button class="step-btn" data-step="4" onclick="goToStep(4)">
+        <button class="step-btn" data-step="4" onclick="goToStep(4)" role="tab" aria-selected="false" tabindex="-1">
           <span class="step-icon">📝</span><span>Summary</span>
         </button>
       </nav>
+
+      <!-- Progress bar (#2) -->
+      <div class="step-progress-row">
+        <div class="step-progress-bar" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1">
+          <div class="step-progress-fill" id="stepProgressFill"></div>
+        </div>
+        <span class="step-progress-label" id="stepProgressLabel">Step 1 of 5</span>
+      </div>
 
       <!-- Step Panels -->
       <div class="steps-container">
 
         <!-- STEP 0: Personal Info -->
-        <div class="step-panel active" id="step-0">
+        <div class="step-panel active" id="step-0" role="tabpanel" aria-labelledby="tab-0">
           <div class="panel-header">
             <h2>Personal Information</h2>
             <p>Let's start with the basics about you</p>
@@ -194,10 +162,10 @@
         </div>
 
         <!-- STEP 1: Experience -->
-        <div class="step-panel" id="step-1">
+        <div class="step-panel" id="step-1" role="tabpanel" aria-labelledby="tab-1">
           <div class="panel-header">
             <h2>Work Experience</h2>
-            <p>Add your professional experience (most recent first)</p>
+            <p>Add your professional experience (most recent first). Drag ⠿ to reorder.</p>
           </div>
 
           <div id="experienceList"></div>
@@ -214,10 +182,10 @@
         </div>
 
         <!-- STEP 2: Education -->
-        <div class="step-panel" id="step-2">
+        <div class="step-panel" id="step-2" role="tabpanel" aria-labelledby="tab-2">
           <div class="panel-header">
             <h2>Education</h2>
-            <p>Your academic background and certifications</p>
+            <p>Your academic background and certifications. Drag ⠿ to reorder.</p>
           </div>
 
           <div id="educationList"></div>
@@ -234,7 +202,7 @@
         </div>
 
         <!-- STEP 3: Skills -->
-        <div class="step-panel" id="step-3">
+        <div class="step-panel" id="step-3" role="tabpanel" aria-labelledby="tab-3">
           <div class="panel-header">
             <h2>Skills</h2>
             <p>Highlight your technical and soft skills</p>
@@ -242,7 +210,7 @@
 
           <div class="skills-input-area">
             <div class="form-group full">
-              <label>Add a skill and press Enter or comma</label>
+              <label for="skillInput">Add a skill and press Enter or comma</label>
               <div class="skill-input-wrapper">
                 <div class="tags-container" id="tagsContainer"></div>
                 <input type="text" id="skillInput" placeholder="e.g. JavaScript, Project Management..." onkeydown="handleSkillInput(event)" />
@@ -347,7 +315,7 @@
         </div>
 
         <!-- STEP 4: Summary -->
-        <div class="step-panel" id="step-4">
+        <div class="step-panel" id="step-4" role="tabpanel" aria-labelledby="tab-4">
           <div class="panel-header">
             <h2>Professional Summary</h2>
             <p>A compelling snapshot of your professional identity</p>
@@ -355,7 +323,7 @@
 
           <div class="form-group full">
             <label for="summary">Summary</label>
-            <textarea id="summary" rows="6" placeholder="Passionate software engineer with 5+ years of experience building scalable web applications. Proven track record of delivering high-impact solutions that drive business growth..." oninput="updatePreview(); autoResize(this)"></textarea>
+            <textarea id="summary" rows="6" placeholder="Passionate software engineer with 5+ years of experience building scalable web applications..." oninput="updatePreview(); autoResize(this)"></textarea>
             <div class="char-count"><span id="summaryCount">0</span> / 400 characters recommended</div>
           </div>
 
@@ -379,9 +347,9 @@
           Live Preview
         </span>
         <div class="zoom-controls">
-          <button onclick="adjustZoom(-0.1)" title="Zoom out">−</button>
+          <button id="zoomOutBtn" onclick="adjustZoom(-0.1)" title="Zoom out">−</button>
           <span id="zoomLabel">80%</span>
-          <button onclick="adjustZoom(0.1)" title="Zoom in">+</button>
+          <button id="zoomInBtn" onclick="adjustZoom(0.1)" title="Zoom in">+</button>
         </div>
       </div>
       <div class="preview-scroll">
@@ -398,8 +366,22 @@
   <!-- Toast notification -->
   <div class="toast" id="toast"></div>
 
+  <!-- Clear Data Modal (#4) -->
+  <div class="modal-overlay" id="clearModal" role="dialog" aria-modal="true" aria-labelledby="clearModalTitle">
+    <div class="modal-box">
+      <h3 id="clearModalTitle">Clear All Data?</h3>
+      <p>This will remove all your resume data. You'll have 5 seconds to undo the action.</p>
+      <div class="modal-actions">
+        <button class="btn-back" onclick="closeClearModal()">Cancel</button>
+        <button class="btn-danger-confirm" onclick="confirmClear()">Clear Everything</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
