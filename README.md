@@ -2,6 +2,8 @@
 
 A clean, fast, browser-based resume builder with live preview and one-click PDF export. No sign-up, no server, no build step — just open and start typing.
 
+**Live Demo:** [https://16th-psyche.github.io/Resume-builder/](https://16th-psyche.github.io/Resume-builder/)
+
 ## Features
 
 - **Live Preview** — see your resume update in real time as you type
